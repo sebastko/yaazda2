@@ -1,0 +1,2 @@
+# This file ensures the images directory is tracked by git
+# The actual image files are already present in the public/images directory
