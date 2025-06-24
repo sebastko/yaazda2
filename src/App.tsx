@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Facebook, Instagram, Youtube, Music, Calendar, Users, Video, Camera, Mail, Phone, MapPin, ExternalLink } from 'lucide-react';
+import { Facebook, Instagram, Youtube, Music, Calendar, Users, Video, Camera, Mail, ExternalLink } from 'lucide-react';
 
 function App() {
   const [formData, setFormData] = useState({
@@ -9,11 +9,20 @@ function App() {
   });
 
   const [activeSection, setActiveSection] = useState('');
+  const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const photos = [
+    { src: '/images/band1.jpg', alt: 'Yaazda! Band Photo 1' },
+    { src: '/images/band2.jpg', alt: 'Yaazda! Band Photo 2' },
+    { src: '/images/band3.jpg', alt: 'Yaazda! Band Photo 3' },
+    { src: '/images/band4.jpg', alt: 'Yaazda! Band Photo 4' }
+  ];
 
   useEffect(() => {
     const handleScroll = () => {
       const sections = ['events', 'about', 'videos', 'photos', 'contact'];
-      const scrollPosition = window.scrollY + 100; // Offset for better detection
+      const scrollPosition = window.scrollY + 100;
 
       for (const section of sections) {
         const element = document.getElementById(section);
@@ -26,17 +35,83 @@ function App() {
         }
       }
 
-      // Handle hero section
       if (window.scrollY < 100) {
         setActiveSection('');
       }
     };
 
     window.addEventListener('scroll', handleScroll);
-    handleScroll(); // Call once to set initial state
+    handleScroll();
 
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  // Touch handling for swipe navigation
+  useEffect(() => {
+    if (!isModalOpen) return;
+
+    let startX = 0;
+    let startY = 0;
+
+    const handleTouchStart = (e: TouchEvent) => {
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+    };
+
+    const handleTouchEnd = (e: TouchEvent) => {
+      if (!startX || !startY) return;
+
+      const endX = e.changedTouches[0].clientX;
+      const endY = e.changedTouches[0].clientY;
+      
+      const diffX = startX - endX;
+      const diffY = startY - endY;
+
+      // Only trigger swipe if horizontal movement is greater than vertical
+      if (Math.abs(diffX) > Math.abs(diffY)) {
+        if (Math.abs(diffX) > 50) { // Minimum swipe distance
+          if (diffX > 0) {
+            // Swipe left - next photo
+            showNextPhoto();
+          } else {
+            // Swipe right - previous photo
+            showPreviousPhoto();
+          }
+        }
+      }
+
+      startX = 0;
+      startY = 0;
+    };
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      switch(e.key) {
+        case 'Escape':
+          closePhotoModal();
+          break;
+        case 'ArrowLeft':
+          showPreviousPhoto();
+          break;
+        case 'ArrowRight':
+          showNextPhoto();
+          break;
+      }
+    };
+
+    document.addEventListener('touchstart', handleTouchStart);
+    document.addEventListener('touchend', handleTouchEnd);
+    document.addEventListener('keydown', handleKeyDown);
+
+    // Prevent body scroll when modal is open
+    document.body.style.overflow = 'hidden';
+
+    return () => {
+      document.removeEventListener('touchstart', handleTouchStart);
+      document.removeEventListener('touchend', handleTouchEnd);
+      document.removeEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = '';
+    };
+  }, [isModalOpen]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({
@@ -47,7 +122,6 @@ function App() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle form submission here
     console.log('Form submitted:', formData);
     alert('Thank you for your message! We\'ll get back to you soon.');
     setFormData({ name: '', email: '', message: '' });
@@ -58,6 +132,23 @@ function App() {
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
     }
+  };
+
+  const openPhotoModal = (index: number) => {
+    setCurrentPhotoIndex(index);
+    setIsModalOpen(true);
+  };
+
+  const closePhotoModal = () => {
+    setIsModalOpen(false);
+  };
+
+  const showNextPhoto = () => {
+    setCurrentPhotoIndex((prev) => (prev + 1) % photos.length);
+  };
+
+  const showPreviousPhoto = () => {
+    setCurrentPhotoIndex((prev) => (prev - 1 + photos.length) % photos.length);
   };
 
   return (
@@ -91,7 +182,7 @@ function App() {
               <Facebook size={20} className="sm:w-6 sm:h-6" />
             </a>
             <a href="#" 
-               className="p-3 sm:p-4 bg-gray-600 rounded-full hover:bg-gray-700 transform hover:scale-110 transition-all duration-300 shadow-lg opacity-50">
+               className="p-3 sm:p-4 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full hover:from-purple-600 hover:to-pink-600 transform hover:scale-110 transition-all duration-300 shadow-lg">
               <Instagram size={20} className="sm:w-6 sm:h-6" />
             </a>
             <a href="https://www.youtube.com/@YaazdaBand" 
@@ -243,11 +334,15 @@ function App() {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
-            {[1, 2, 3, 4].map((num) => (
-              <div key={num} className="group relative overflow-hidden rounded-lg shadow-xl border-2 border-red-500/30 hover:border-red-500 transition-all duration-300">
+            {photos.map((photo, index) => (
+              <div 
+                key={index} 
+                className="group relative overflow-hidden rounded-lg shadow-xl border-2 border-red-500/30 hover:border-red-500 transition-all duration-300 cursor-pointer"
+                onClick={() => openPhotoModal(index)}
+              >
                 <img
-                  src={`/images/band${num}.jpg`}
-                  alt={`Yaazda! Band Photo ${num}`}
+                  src={photo.src}
+                  alt={photo.alt}
                   className="w-full h-64 md:h-80 object-cover group-hover:scale-110 transition-transform duration-500"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -334,7 +429,7 @@ function App() {
                 <Facebook size={20} className="sm:w-6 sm:h-6" />
               </a>
               <a href="#" 
-                 className="p-3 sm:p-4 bg-gray-600 rounded-full hover:bg-gray-700 transform hover:scale-110 transition-all duration-300 shadow-lg opacity-50">
+                 className="p-3 sm:p-4 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full hover:from-purple-600 hover:to-pink-600 transform hover:scale-110 transition-all duration-300 shadow-lg">
                 <Instagram size={20} className="sm:w-6 sm:h-6" />
               </a>
               <a href="https://www.youtube.com/@YaazdaBand" 
@@ -351,6 +446,53 @@ function App() {
           </div>
         </div>
       </footer>
+
+      {/* Photo Modal */}
+      {isModalOpen && (
+        <div className="fixed inset-0 bg-black/95 flex items-center justify-center z-50 p-4">
+          <div className="relative max-w-[95vw] max-h-[95vh] flex items-center justify-center">
+            {/* Close button */}
+            <button
+              onClick={closePhotoModal}
+              className="absolute -top-12 right-0 text-white text-2xl bg-black/50 hover:bg-red-500 rounded-full w-10 h-10 flex items-center justify-center transition-all duration-300 z-10"
+            >
+              ×
+            </button>
+
+            {/* Previous button */}
+            <button
+              onClick={showPreviousPhoto}
+              className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white text-2xl bg-black/50 hover:bg-red-500 rounded-full w-12 h-12 flex items-center justify-center transition-all duration-300 z-10"
+            >
+              ‹
+            </button>
+
+            {/* Image */}
+            <img
+              src={photos[currentPhotoIndex].src}
+              alt={photos[currentPhotoIndex].alt}
+              className="max-w-full max-h-full object-contain rounded-lg shadow-2xl"
+              style={{
+                maxWidth: '90vw',
+                maxHeight: '90vh'
+              }}
+            />
+
+            {/* Next button */}
+            <button
+              onClick={showNextPhoto}
+              className="absolute right-4 top-1/2 transform -translate-y-1/2 text-white text-2xl bg-black/50 hover:bg-red-500 rounded-full w-12 h-12 flex items-center justify-center transition-all duration-300 z-10"
+            >
+              ›
+            </button>
+
+            {/* Photo counter */}
+            <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-white bg-black/50 px-3 py-1 rounded-full text-sm">
+              {currentPhotoIndex + 1} / {photos.length}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
