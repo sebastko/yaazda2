@@ -414,6 +414,19 @@ function App() {
                 Send Message
               </button>
             </form>
+            
+            {/* Direct contact email */}
+            <div className="text-center mt-8 pt-6 border-t border-gray-700">
+              <p className="text-gray-400 text-base sm:text-lg">
+                or contact us directly at:{' '}
+                <a 
+                  href="mailto:yaazdaband@gmail.com" 
+                  className="text-red-500 hover:text-red-400 font-semibold transition-colors duration-300"
+                >
+                  yaazdaband@gmail.com
+                </a>
+              </p>
+            </div>
           </div>
         </div>
       </section>
