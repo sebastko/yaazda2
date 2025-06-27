@@ -149,7 +149,7 @@ body {
 
 .photo-modal-close {
   position: absolute;
-  top: -50px;
+  top: 0px;
   right: 0;
   background: none;
   border: none;
@@ -198,11 +198,11 @@ body {
 }
 
 .photo-modal-prev {
-  left: -80px;
+  left: 0px;
 }
 
 .photo-modal-next {
-  right: -80px;
+  right: 0px;
 }
 
 @media (max-width: 768px) {
