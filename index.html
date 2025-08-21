@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Yaazda! - Seattle Polish Rock Cover Band</title>
     <meta name="description" content="Yaazda! is a Seattle-based Polish rock cover band performing hits from various eras of Polish music. Book us for your next event!">
+    <link rel="icon" href="images/logo-responsive-3.svg" type="image/svg+xml">
+    <!-- Social preview image -->
+    <meta property="og:image" content="images/web-preview.jpg">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="images/web-preview.jpg">
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -17,20 +22,16 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
 </head>
-<body class="bg-black text-white">
+<body class="bg-black text-white" style="overflow-x: visible !important;">
     <!-- Hero Section -->
-    <section class="relative h-screen flex items-center justify-center overflow-hidden">
+    <section class="relative h-screen flex items-center justify-center overflow-visible">
         <div class="absolute inset-0 hero-bg"
                style="background-image: url('images/background-2.jpg'); filter: blur(3px) brightness(0.4);"></div>
         <div class="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/50"></div>
         
         <div class="relative z-10 text-center px-4 max-w-4xl mx-auto">
-            <!-- <h1 class="text-4xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-black mb-6 text-red-500 transform hover:scale-105 transition-transform duration-300"
-              style="font-family: Impact, Arial Black, sans-serif; text-shadow: 4px 4px 8px rgba(0,0,0,0.8), 0 0 20px rgba(239, 68, 68, 0.5); letter-spacing: 0.1em;">
-              <img src="images/logo.png" alt="Logo" class="h-auto" style="width: 80%;">
-            </h1> -->
-            <div style="display: flex; justify-content: center; align-items: center; padding-bottom: 20px; margin-left: 10px;">
-              <img src="images/logo.png" alt="Logo" style="width: 80%;">
+            <div style="display: flex; justify-content: center; align-items: center; padding-bottom: 20px; margin: 0 auto; overflow: visible;">
+              <img src="images/logo-full.svg" alt="Yaazda!" style="width: 60vw !important; max-width: none !important;">
             </div>
             <p class="text-sm sm:text-lg md:text-xl lg:text-2xl xl:text-3xl font-bold text-white mb-8 tracking-wide px-2">
                 Seattle-based Polish rock cover band
